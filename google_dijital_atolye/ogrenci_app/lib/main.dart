@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ogrenci_app/pages/mesajlar_sayfasi.dart';
 import 'package:ogrenci_app/pages/ogrenciler_sayfasi.dart';
 import 'package:ogrenci_app/pages/ogretmenler_sayfasi.dart';
@@ -7,7 +8,7 @@ import 'package:ogrenci_app/repository/ogrenciler_repository.dart';
 import 'package:ogrenci_app/repository/ogretmenler_repository.dart';
 
 void main() {
-  runApp(const OgrenciApp());
+  runApp(const ProviderScope(child: OgrenciApp()));
 }
 
 class OgrenciApp extends StatelessWidget {
@@ -25,24 +26,15 @@ class OgrenciApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatefulWidget {
+class MyHomePage extends ConsumerWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  MesajlarRepository mesajlarRepository = MesajlarRepository();
-  OgrencilerRepository ogrencilerRepository = OgrencilerRepository();
-  OgretmenlerRepository ogretmenlerRepository = OgretmenlerRepository();
-
   void ogrencilerSayfasinaGit(BuildContext context) {
     Navigator.of(context).push(MaterialPageRoute(
       builder: (context) {
-        return OgrencilerSayfasi(ogrencilerRepository);
+        return const OgrencilerSayfasi();
       },
     ));
   }
@@ -50,7 +42,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void ogretmenlerSayfasinaGit(BuildContext context) {
     Navigator.of(context).push(MaterialPageRoute(
       builder: (context) {
-        return OgretmenlerSayfasi(ogretmenlerRepository);
+        return const OgretmenlerSayfasi();
       },
     ));
   }
@@ -58,17 +50,18 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> mesajlarrSayfasinaGit(BuildContext context) async {
     await Navigator.of(context).push(MaterialPageRoute(
       builder: (context) {
-        return MesajlarSayfasi(mesajlarRepository);
+        return const MesajlarSayfasi();
       },
     ));
-    setState(() {});
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final ogrencilerRepository = ref.watch(ogrencilerProvider);
+    final ogretmenlerRepository = ref.watch(ogretmenProvider);
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(title),
       ),
       drawer: Drawer(
           child: Column(
@@ -104,7 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
           TextButton(
             onPressed: () {},
             child: const Text(
-              "esajlar ",
+              "Mesajlar ",
             ),
           ),
         ],
@@ -118,7 +111,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   mesajlarrSayfasinaGit(context);
                 },
                 child: Text(
-                  "${mesajlarRepository.mesajSayisi} yeni Mesaj",
+                  "${ref.watch(yeniMesajSayisiProvider)} yeni Mesaj",
                   style: const TextStyle(color: Colors.blue),
                 )),
             TextButton(
