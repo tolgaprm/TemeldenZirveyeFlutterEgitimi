@@ -30,23 +30,60 @@ class OgretmenlerSayfasi extends ConsumerWidget {
                 ),
                 Align(
                   alignment: Alignment.centerRight,
-                  child: IconButton(
-                      onPressed: () {
-                        ref.read(ogretmenProvider).indir();
-                      }, icon: const Icon(Icons.download)),
+                  child: OgretmenIndirmeButonu(),
                 )
               ],
             ),
           ),
           Expanded(
               child: ListView.separated(
-                separatorBuilder: (context, index) => Divider(),
-                itemCount: ogretmenlerRepository.ogretmenler.length,
-                itemBuilder: (context, index) =>
-                    OgretmenSatiri(ogretmenlerRepository.ogretmenler[index]),
-              )),
+            separatorBuilder: (context, index) => Divider(),
+            itemCount: ogretmenlerRepository.ogretmenler.length,
+            itemBuilder: (context, index) =>
+                OgretmenSatiri(ogretmenlerRepository.ogretmenler[index]),
+          )),
         ],
       ),
+    );
+  }
+}
+
+class OgretmenIndirmeButonu extends StatefulWidget {
+  const OgretmenIndirmeButonu({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<OgretmenIndirmeButonu> createState() => _OgretmenIndirmeButonuState();
+}
+
+class _OgretmenIndirmeButonuState extends State<OgretmenIndirmeButonu> {
+  bool isLoading = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer(
+      builder: (context, ref, child) {
+        return isLoading
+            ? const CircularProgressIndicator()
+            : IconButton(
+                onPressed: () async {
+                  try {
+                    setState(() {
+                      isLoading = true;
+                    });
+                    await ref.read(ogretmenProvider).indir();
+                  } catch (e) {
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(SnackBar(content: Text("Hata")));
+                  } finally {
+                    setState(() {
+                      isLoading = false;
+                    });
+                  }
+                },
+                icon: const Icon(Icons.download));
+      },
     );
   }
 }
@@ -54,7 +91,8 @@ class OgretmenlerSayfasi extends ConsumerWidget {
 class OgretmenSatiri extends StatelessWidget {
   final Ogretmen ogretmen;
 
-  const OgretmenSatiri(this.ogretmen, {
+  const OgretmenSatiri(
+    this.ogretmen, {
     Key? key,
   }) : super(key: key);
 
