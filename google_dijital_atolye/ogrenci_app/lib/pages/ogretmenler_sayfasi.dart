@@ -32,7 +32,7 @@ class OgretmenlerSayfasi extends ConsumerWidget {
                   alignment: Alignment.centerRight,
                   child: IconButton(
                       onPressed: () {
-                        ref.read(ogretmenProvider).download();
+                        ref.read(ogretmenProvider).indir();
                       }, icon: const Icon(Icons.download)),
                 )
               ],
