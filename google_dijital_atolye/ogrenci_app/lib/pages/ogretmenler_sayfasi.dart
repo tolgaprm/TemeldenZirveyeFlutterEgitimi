@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ogrenci_app/repository/ogretmenler_repository.dart';
 
+import '../models/Ogretmen.dart';
+
 class OgretmenlerSayfasi extends ConsumerWidget {
-
-  const OgretmenlerSayfasi({Key? key})
-      : super(key: key);
-
+  const OgretmenlerSayfasi({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -20,26 +19,34 @@ class OgretmenlerSayfasi extends ConsumerWidget {
           PhysicalModel(
             color: Colors.white,
             elevation: 10,
-            child: Center(
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 32, horizontal: 32),
-                child: Text(
-                    "${ogretmenlerRepository.ogretmenler.length} Öğretmen"),
-              ),
+            child: Stack(
+              children: [
+                Center(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 32, horizontal: 32),
+                    child: Text(
+                        "${ogretmenlerRepository.ogretmenler.length} Öğretmen"),
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: IconButton(
+                      onPressed: () {
+                        ref.read(ogretmenProvider).download();
+                      }, icon: const Icon(Icons.download)),
+                )
+              ],
             ),
           ),
           Expanded(
-
               child: ListView.separated(
                 separatorBuilder: (context, index) => Divider(),
                 itemCount: ogretmenlerRepository.ogretmenler.length,
                 itemBuilder: (context, index) =>
-                    OgretmenSatiri(
-                        ogretmenlerRepository.ogretmenler[index]),
+                    OgretmenSatiri(ogretmenlerRepository.ogretmenler[index]),
               )),
         ],
-      )
-      ,
+      ),
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:riverpod/riverpod.dart';
+
+import '../models/Ogrenci.dart';
 
 class OgrencilerRepository extends ChangeNotifier {
   final ogrenciler = [
@@ -28,11 +29,4 @@ final ogrencilerProvider = ChangeNotifierProvider((ref) {
   return OgrencilerRepository();
 } );
 
-class Ogrenci {
-  String ad;
-  String soyad;
-  int yas;
-  String cinsiyet;
 
-  Ogrenci(this.ad, this.soyad, this.yas, this.cinsiyet);
-}
